@@ -19,6 +19,7 @@ import java.util.Set;
 public class User {
     @Id
     private String id;
+    private String username;
     private String firstname;
     private String lastname;
     private String email;

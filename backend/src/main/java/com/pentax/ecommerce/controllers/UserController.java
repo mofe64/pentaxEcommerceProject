@@ -28,8 +28,9 @@ public class UserController {
     }
 
 
-//    @PostMapping("/register/seller")
-//    public ResponseEntity<?> registerSeller(){
-//
-//    }
+    @PostMapping("/register/seller")
+    public ResponseEntity<?> registerSeller(@Valid @RequestBody UserDTO userDTO){
+        UserDTO response = userService.registerSeller(userDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

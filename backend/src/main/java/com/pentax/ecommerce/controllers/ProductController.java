@@ -61,9 +61,10 @@ public class ProductController {
         System.out.println(productId);
         try {
             ProductDTO productDTO = productService.findProductById(productId);
-            return new ResponseEntity<>(new ApiResponse(true, "product has being found"), HttpStatus.OK);
+            return new ResponseEntity<>(productDTO, HttpStatus.OK);
         } catch (ProductException productException) {
-            return new ResponseEntity<>(new ApiResponse())
+            return new ResponseEntity<>(new ApiResponse(false,productException.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
 
     }

@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ProductService {
     public void addProduct(ProductDTO productDTO);
     public void removeProduct(String productId) throws ProductException;
-    public ProductDTO findProductById(String productId);
+    public ProductDTO findProductById(String productId) throws ProductException;
     public List<ProductDTO> getAllProducts();
     public ProductDTO updateProduct(String productId ,ProductDTO updatedProductDetails) throws ProductException;
 //    public List<ProductDTO> getAllProductsInACategory() TODO

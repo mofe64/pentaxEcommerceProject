@@ -7,6 +7,7 @@ import com.pentax.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,8 @@ public class ProductServicesImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO findProductById(String productId) {
-        return null;
+    public ProductDTO findProductById(String productId) throws ProductException {
+        return ProductDTO.packDTO(findAProductById(productId));
     }
 
     private Product findAProductById(String productId) throws ProductException {
@@ -52,8 +53,15 @@ public class ProductServicesImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        return null;
+    public List<ProductDTO> getAllProducts(){
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for (Product product: getAllProductsFromDb()){
+            productDTOS.add(ProductDTO.packDTO(product));
+        }
+       return productDTOS;
+    }
+    private List<Product> getAllProductsFromDb(){
+        return productRepository.findAll();
     }
 
     @Override

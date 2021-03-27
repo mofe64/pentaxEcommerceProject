@@ -24,6 +24,9 @@ public class UserDTO {
     private String lastName;
     @Email(message = "Please provide a valid email")
     private String email;
+    @NotNull
+    @NotBlank(message = "username field cannot be empty")
+    private String username;
     private List<Address> addresses = new ArrayList<>();
     @NotNull
     @NotBlank
@@ -36,6 +39,7 @@ public class UserDTO {
         user.setLastname(userDTO.getLastName());
         user.setAddresses(userDTO.getAddresses());
         user.setPassword(userDTO.getPassword());
+        user.setUsername(userDTO.getUsername());
         return user;
     }
 
@@ -45,6 +49,7 @@ public class UserDTO {
         userDTO.setEmail(user.getEmail());
         userDTO.setFirstName(user.getFirstname());
         userDTO.setLastName(user.getLastname());
+        userDTO.setUsername(user.getUsername());
         userDTO.setPassword("");
         return userDTO;
     }

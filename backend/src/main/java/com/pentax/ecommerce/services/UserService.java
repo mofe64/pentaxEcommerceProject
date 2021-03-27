@@ -11,4 +11,5 @@ import org.springframework.stereotype.Service;
 public interface UserService {
     UserDTO registerBuyer(UserDTO buyerDetails) throws UserException;
     UserDTO registerSeller(UserDTO sellerDetails) throws UserException;
+
 }

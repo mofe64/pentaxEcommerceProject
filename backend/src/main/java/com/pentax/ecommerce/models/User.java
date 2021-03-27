@@ -23,10 +23,12 @@ public class User {
     private String firstname;
     private String lastname;
     private String email;
-    @DBRef
     private List<Address> addresses = new ArrayList<>();
     private List<String>  phoneNumbers = new ArrayList<>();
     private String password;
     @DBRef
     private Set<Role> roles = new HashSet<>();
+    String cartId;
+    @DBRef
+    private List<Order> orderList = new ArrayList<>();
 }

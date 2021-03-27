@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
+    private String id;
     @NotNull
     @NotBlank(message = "firstname field cannot be empty")
     @Size(min = 2, message = "Firstname cannot be less than 2 characters")
@@ -31,6 +32,7 @@ public class UserDTO {
     @NotNull
     @NotBlank
     private String password;
+    private String cartId;
 
     public static User unpackDTO(UserDTO userDTO){
         User user = new User();
@@ -51,6 +53,8 @@ public class UserDTO {
         userDTO.setLastName(user.getLastname());
         userDTO.setUsername(user.getUsername());
         userDTO.setPassword("");
+        userDTO.setCartId(user.getCartId());
+        userDTO.setId(user.getId());
         return userDTO;
     }
 }

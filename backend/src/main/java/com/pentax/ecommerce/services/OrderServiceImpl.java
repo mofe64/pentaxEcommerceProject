@@ -6,9 +6,11 @@ import com.pentax.ecommerce.models.Address;
 import com.pentax.ecommerce.models.Order;
 import com.pentax.ecommerce.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class OrderServiceImpl implements OrderService{
     @Autowired
     private OrderRepository orderRepository;

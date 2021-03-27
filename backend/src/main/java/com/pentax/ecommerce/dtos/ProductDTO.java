@@ -22,8 +22,11 @@ public class ProductDTO {
     @NotBlank(message = "Please enter a product description")
     private String description;
     @NotNull
+    @NotBlank(message = "Please enter a product name")
+    private String name;
+    @NotNull
     @NotBlank(message = "please enter a price")
-    private BigDecimal price;
+    private String price;
     @NotNull
     @NotBlank(message = "Please provide a product Image")
     private String image;
@@ -32,17 +35,19 @@ public class ProductDTO {
     public static Product unpackDTO(ProductDTO productDTO){
         Product product = new Product();
        product.setDescription(productDTO.getDescription());
-       product.setPrice(productDTO.getPrice());
+       product.setPrice(new BigDecimal(productDTO.getPrice()));
        product.setImage(productDTO.getImage());
+       product.setName(productDTO.getName());
         return product;
     }
 
     public static ProductDTO packDTO(Product product) {
-       ProductDTO productDTO = new ProductDTO();
+        ProductDTO productDTO = new ProductDTO();
         productDTO.setId(product.getId());
         productDTO.setDescription(product.getDescription());
-        productDTO.setPrice(product.getPrice());
+        productDTO.setPrice(product.getPrice().toPlainString());
         productDTO.setImage(productDTO.getImage());
+        productDTO.setName(product.getName());
         return productDTO;
 
     }

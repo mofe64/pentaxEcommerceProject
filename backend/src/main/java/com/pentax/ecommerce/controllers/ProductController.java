@@ -20,7 +20,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
     @PostMapping("/new")
     public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO) {
         System.out.println(productDTO);

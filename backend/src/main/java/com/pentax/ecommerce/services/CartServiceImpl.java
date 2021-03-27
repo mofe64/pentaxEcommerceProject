@@ -2,8 +2,10 @@ package com.pentax.ecommerce.services;
 
 import com.pentax.ecommerce.dtos.CartDTO;
 import com.pentax.ecommerce.exceptions.CartException;
+import com.pentax.ecommerce.exceptions.ProductException;
 import com.pentax.ecommerce.models.Cart;
 import com.pentax.ecommerce.models.Item;
+import com.pentax.ecommerce.models.Product;
 import com.pentax.ecommerce.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,15 @@ public class CartServiceImpl implements CartService {
     @Autowired
     CartRepository cartRepository;
 
+    @Autowired
+    ProductService productService;
+
     @Override
-    public void createCart() {
-       createNewCart();
+    public Cart createCart() {
+      return createNewCart();
     }
-    private void createNewCart(){
-        cartRepository.save(new Cart());
+    private Cart createNewCart(){
+      return  cartRepository.save(new Cart());
     }
 
     @Override
@@ -29,17 +34,19 @@ public class CartServiceImpl implements CartService {
         Cart cart = findCartByTheId(cartId);
         BigDecimal total = BigDecimal.ZERO;
         for (Item cartItem: cart.getItems().values()){
-            total.add(cartItem.getItemTotal());
+           total= total.add(cartItem.getItemTotal());
         }
         return total;
     }
 
     @Override
-    public void addItemToCart(Item item, int quantity, String cartId) throws CartException {
+    public void addItemToCart(String productId, int quantity, String cartId) throws CartException, ProductException {
+        Product product = productService.findProduct(productId);
         Cart cart = findCartByTheId(cartId);
-        cart.addItem(item, quantity);
+        cart.addItem(product, quantity);
         saveCart(cart);
     }
+
 
     private Cart saveCart(Cart cart) {
         return cartRepository.save(cart);
@@ -63,7 +70,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO findCartById(String cartId) throws CartException {
-        return CartDTO.packDTO(findCartByTheId(cartId));
+        Cart cart = findCartByTheId(cartId);
+        return CartDTO.packDTO(cart);
     }
 
 

@@ -23,23 +23,37 @@ public class Cart {
     private BigDecimal total;
 
 
-    public void addItem(Item item, int quantity){
-        String productId = item.getProduct().getId();
-        if(items.containsKey(productId)){
+    public void addItem(Product product, int quantity) {
+        String productId = product.getId();
+        Item item = new Item();
+        item.setProduct(product);
+        if (items.containsKey(productId)) {
             items.get(productId).increaseQuantity(quantity);
         } else {
             items.put(productId, item);
         }
+        total = calculateTotal();
     }
 
     public void removeItem(String productId) {
         items.remove(productId);
+        total = calculateTotal();
     }
+
     public void removeItem(String productId, int quantity) throws CartException {
-        if(items.containsKey(productId)){
+        if (items.containsKey(productId)) {
             items.get(productId).decreaseQuantity(quantity);
         } else {
             throw new CartException("Item not in cart");
         }
+        total = calculateTotal();
+    }
+
+    private BigDecimal calculateTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Item cartItem : items.values()) {
+            total = total.add(cartItem.getItemTotal());
+        }
+        return total;
     }
 }

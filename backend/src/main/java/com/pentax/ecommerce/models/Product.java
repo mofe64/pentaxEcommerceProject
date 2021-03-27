@@ -16,6 +16,8 @@ import java.util.List;
 public class Product {
     @Id
     private String id;
+    private String name;
+    //TODO FIX NAME
     private String description;
     private BigDecimal price;
     private String image;

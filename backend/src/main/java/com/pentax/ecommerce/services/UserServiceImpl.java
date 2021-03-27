@@ -1,14 +1,8 @@
 package com.pentax.ecommerce.services;
 
-import com.pentax.ecommerce.dtos.LoginRequest;
-import com.pentax.ecommerce.dtos.Token;
-import com.pentax.ecommerce.dtos.UserDTO;
-import com.pentax.ecommerce.exceptions.AuthenticationException;
-import com.pentax.ecommerce.exceptions.UserException;
-import com.pentax.ecommerce.exceptions.UserRoleNotFoundException;
-import com.pentax.ecommerce.models.Address;
-import com.pentax.ecommerce.models.Role;
-import com.pentax.ecommerce.models.User;
+import com.pentax.ecommerce.dtos.*;
+import com.pentax.ecommerce.exceptions.*;
+import com.pentax.ecommerce.models.*;
 import com.pentax.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -30,6 +25,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -78,6 +78,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             buyer.getRoles().add(buyerRole);
         }
         buyer.setPassword(bCryptPasswordEncoder.encode(buyer.getPassword()));
+        Cart cart = cartService.createCart();
+        buyer.setCartId(cart.getId());
         User savedBuyer = registerABuyer(buyer);
         return UserDTO.packDTO(savedBuyer);
     }
@@ -97,17 +99,77 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         }
         Role sellerRole = null;
+        Role buyerRole = null;
         try {
             sellerRole = roleService.findByName("SELLER");
+            buyerRole = roleService.findByName("BUYER");
         } catch (UserRoleNotFoundException userRoleNotFoundException) {
             userRoleNotFoundException.printStackTrace();
         }
         if (sellerRole != null) {
             seller.getRoles().add(sellerRole);
+            seller.getRoles().add(buyerRole);
         }
         seller.setPassword(bCryptPasswordEncoder.encode(seller.getPassword()));
+        Cart cart = cartService.createCart();
+        seller.setCartId(cart.getId());
         User savedSeller = registerASeller(seller);
         return UserDTO.packDTO(savedSeller);
+    }
+
+    @Override
+    public CartDTO getUserCart(String userId) throws UserException, CartException {
+        String cartId = findAUserById(userId).getCartId();
+        System.out.println("cartId is " +cartId);
+        CartDTO cartDTO = cartService.findCartById(cartId);
+        System.out.println("userService");
+        System.out.println(cartDTO);
+        return cartDTO;
+    }
+
+    @Override
+    public UserDTO findUserById(String userId) throws UserException {
+        return UserDTO.packDTO(findAUserById(userId));
+    }
+
+    @Override
+    public void addAddress(String userId, Address address) throws UserException {
+        User user = findAUserById(userId);
+        user.getAddresses().add(address);
+        saveUser(user);
+    }
+    private void saveUser(User user){
+        userRepository.save(user);
+    }
+
+    @Override
+    public void addProductToCart(String productId, String userId, int quantity) throws UserException, ProductException, CartException {
+        User user = findAUserById(userId);
+        String cartId = user.getCartId();
+        cartService.addItemToCart(productId,quantity, cartId);
+    }
+
+    @Override
+    public void removeProductFromCart(String productId, String userId, int quantity) throws UserException, CartException {
+        User user = findAUserById(userId);
+        String cartId = user.getCartId();
+        cartService.removeItemFromCart(cartId, productId);
+    }
+
+    @Override
+    public List<Address> getUserAddresses(String userId) throws UserException {
+        User user = findAUserById(userId);
+        return user.getAddresses();
+    }
+
+
+    private User findAUserById(String userId) throws UserException {
+       Optional<User> userOptional = userRepository.findUserById(userId);
+       if(userOptional.isPresent()){
+           return userOptional.get();
+       } else {
+           throw new UserException("No User Found with that Id");
+       }
     }
 
     private User registerASeller(User seller) {

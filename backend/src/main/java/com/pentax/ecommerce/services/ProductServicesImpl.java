@@ -7,6 +7,7 @@ import com.pentax.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,13 +72,18 @@ public class ProductServicesImpl implements ProductService {
             productToUpdate.setDescription(updatedProductDetails.getDescription());
         }
         if (!productToUpdate.getPrice().equals(updatedProductDetails.getPrice())) {
-            productToUpdate.setPrice(updatedProductDetails.getPrice());
+            productToUpdate.setPrice(new BigDecimal(updatedProductDetails.getPrice()));
         }
         if (!productToUpdate.getImage().equals(updatedProductDetails.getImage())) {
             productToUpdate.setImage(updatedProductDetails.getImage());
         }
         Product updatedProduct = saveProduct(productToUpdate);
         return ProductDTO.packDTO(updatedProduct);
+    }
+
+    @Override
+    public Product findProduct(String productId) throws ProductException {
+        return findAProductById(productId);
     }
 
     private Product saveProduct(Product product) {

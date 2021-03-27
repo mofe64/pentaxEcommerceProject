@@ -3,6 +3,7 @@ package com.pentax.ecommerce.services;
 
 import com.pentax.ecommerce.dtos.ProductDTO;
 import com.pentax.ecommerce.exceptions.ProductException;
+import com.pentax.ecommerce.models.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public interface ProductService {
     public ProductDTO findProductById(String productId) throws ProductException;
     public List<ProductDTO> getAllProducts();
     public ProductDTO updateProduct(String productId ,ProductDTO updatedProductDetails) throws ProductException;
+    public Product findProduct(String productId) throws ProductException;
 //    public List<ProductDTO> getAllProductsInACategory() TODO
 
 }

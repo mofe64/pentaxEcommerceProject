@@ -18,11 +18,9 @@ public class CartDTO {
     @NotNull
     @NotBlank
     private String id;
-
     @NotNull
     @NotBlank
     private BigDecimal total;
-
     private Map<String, Item> items;
 
 
@@ -35,9 +33,9 @@ public class CartDTO {
 
     public static CartDTO packDTO(Cart cart) {
         CartDTO cartDTO = new CartDTO();
-        cart.setId(cart.getId());
-        cart.setItems(cart.getItems());
-        cart.setTotal(cart.getTotal());
+        cartDTO.setId(cart.getId());
+        cartDTO.setItems(cart.getItems());
+        cartDTO.setTotal(cart.getTotal());
         return cartDTO;
     }
 }

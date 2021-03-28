@@ -9,10 +9,15 @@ import com.pentax.ecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
+@SuppressWarnings("DuplicatedCode")
 @CrossOrigin(origins = ".", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/product")
@@ -20,6 +25,7 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
     @PostMapping("/new")
     public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO) {
         System.out.println(productDTO);
@@ -62,10 +68,22 @@ public class ProductController {
             ProductDTO productDTO = productService.findProductById(productId);
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
         } catch (ProductException productException) {
-            return new ResponseEntity<>(new ApiResponse(false,productException.getMessage()),
+            return new ResponseEntity<>(new ApiResponse(false, productException.getMessage()),
                     HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        }));
+        return errors;
     }
 
 }

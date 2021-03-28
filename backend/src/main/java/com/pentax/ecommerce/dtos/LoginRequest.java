@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class LoginRequest {
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Please provide your username")
     private String username;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Please provide your password")
     private String password;
 }

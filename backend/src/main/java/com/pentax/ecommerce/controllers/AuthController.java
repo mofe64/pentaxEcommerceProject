@@ -15,8 +15,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressWarnings("DuplicatedCode")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/auth/")
@@ -32,7 +39,7 @@ public class AuthController {
     private RoleService roleService;
 
     @PostMapping("login")
-    public ResponseEntity<?> generateToken(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> generateToken( @Valid @RequestBody LoginRequest loginRequest) {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -45,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("register/seller")
-    public ResponseEntity<?> registerSeller(@RequestBody UserDTO userDTO){
+    public ResponseEntity<?> registerSeller(@Valid @RequestBody UserDTO userDTO){
         try {
             UserDTO newSeller = userService.registerSeller(userDTO);
             return new ResponseEntity<>(newSeller, HttpStatus.OK);
@@ -55,12 +62,24 @@ public class AuthController {
     }
 
     @PostMapping("register/buyer")
-    public ResponseEntity<?> registerBuyer(@RequestBody UserDTO userDTO){
+    public ResponseEntity<?> registerBuyer(@Valid @RequestBody UserDTO userDTO){
         try {
             UserDTO newBuyer = userService.registerBuyer(userDTO);
             return new ResponseEntity<>(newBuyer, HttpStatus.OK);
         } catch (UserException userException){
             return new ResponseEntity<>(new ApiResponse(false, userException.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception){
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        }));
+        return errors;
     }
 }

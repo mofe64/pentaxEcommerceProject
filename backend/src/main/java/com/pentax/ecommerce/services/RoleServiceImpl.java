@@ -1,5 +1,6 @@
-package com.pentax.ecommerce.exceptions;
+package com.pentax.ecommerce.services;
 
+import com.pentax.ecommerce.exceptions.UserRoleNotFoundException;
 import com.pentax.ecommerce.models.Role;
 import com.pentax.ecommerce.repository.RoleRepository;
 import com.pentax.ecommerce.services.RoleService;
